@@ -5,6 +5,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.WindowsAzure.Storage.Table;
 using System.Threading.Tasks;
 using System;
+using Microsoft.Extensions.Configuration;
+using oFormsAPI.Models;
+using Microsoft.Extensions.Options;
 
 namespace oFormsAPI.Repositories
 {
@@ -18,7 +21,7 @@ namespace oFormsAPI.Repositories
     {
         ILogger<ApiFormRepository> _logger;
         
-        public ApiFormRepository(ILogger<ApiFormRepository> logger)
+        public ApiFormRepository(ILogger<ApiFormRepository> logger, IOptions<FormsConfiguration> _formsConfiguration) : base(_formsConfiguration)
         {
             _logger = logger;
         }

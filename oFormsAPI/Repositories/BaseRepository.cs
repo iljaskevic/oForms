@@ -5,6 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
+using Microsoft.Extensions.Configuration;
+using oFormsAPI.Models;
+using Microsoft.Extensions.Options;
 
 namespace oFormsAPI.Repositories
 {
@@ -16,8 +19,13 @@ namespace oFormsAPI.Repositories
 
     public abstract class BaseRepository : IBaseRepository
     {
-        private readonly string mainStorageConnString = "DefaultEndpointsProtocol=https;AccountName=oformsstorage;AccountKey=6pJFKAnakvNoQldG+Pchd9tFgWp2XjUgxzQ6P+M19RhVkEI6mHL3zBlyTAG99QsP3+/I8nt5Cv6E1GfoIl9jHg==;EndpointSuffix=core.windows.net";
+        private string mainStorageConnString;
         
+        public BaseRepository(IOptions<FormsConfiguration> _formsConfiguration)
+        {
+            mainStorageConnString = _formsConfiguration.Value.StorageConnectionString;
+        }
+
         public CloudTable GetAPIKeyTable()
         {
             return GetTable(Consts.AZURE_API_KEY_TABLE_NAME, mainStorageConnString);

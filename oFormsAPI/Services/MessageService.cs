@@ -6,6 +6,9 @@ using System.Text;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Web;
+using Microsoft.Extensions.Logging;
+using oFormsAPI.Models;
+using Microsoft.Extensions.Options;
 
 namespace oFormsAPI.Services
 {
@@ -17,10 +20,21 @@ namespace oFormsAPI.Services
     
     public class MessageService : IMessageService
     {
+        ILogger<MessageService> _logger;
+        private string emailApiKey;
+
+
+        public MessageService(ILogger<MessageService> logger, IOptions<FormsConfiguration> _formsConfiguration)
+        {
+            _logger = logger;
+            emailApiKey = _formsConfiguration.Value.SendGridAPIKey;
+        }
+
         public async Task SendEmailAsync(EmailTemplateInfo emailTemplateInfo, string formData)
         {
+            _logger.LogInformation("Sending form data through Sendgrid");
             //SendGrid example
-            var apiKey = "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";//Environment.GetEnvironmentVariable("NAME_OF_THE_ENVIRONMENT_VARIABLE_FOR_YOUR_SENDGRID_KEY");
+            var apiKey = emailApiKey;
             var client = new SendGridClient(apiKey);
             var from = new EmailAddress(emailTemplateInfo.FromEmail, emailTemplateInfo.FromName);
             //var subject = "Sending with SendGrid is Fun";
@@ -29,6 +43,7 @@ namespace oFormsAPI.Services
             var htmlContent = FormatEmailMessage(emailTemplateInfo, formData);
             var msg = MailHelper.CreateSingleEmail(from, to, emailTemplateInfo.Subject, null, htmlContent);
             var response = await client.SendEmailAsync(msg);
+            _logger.LogInformation("Finished sending form data through Sendgrid");
         }
 
         private string FormatEmailMessage(EmailTemplateInfo emailTemplateInfo, string formData)

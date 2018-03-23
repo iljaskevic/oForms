@@ -11,6 +11,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.ResponseCompression;
 using oFormsAPI.Services;
 using oFormsAPI.Repositories;
+using oFormsAPI.Models;
 
 namespace oFormsAPI
 {
@@ -36,6 +37,8 @@ namespace oFormsAPI
             services.AddMvc();
             services.Configure<GzipCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Optimal);
             services.AddResponseCompression();
+
+            services.Configure<FormsConfiguration>(Configuration.GetSection("FormsConfiguration"));
 
             // Add application services.
             services.AddTransient<IMessageService, MessageService>();
