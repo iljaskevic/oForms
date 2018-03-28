@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 using oFormsAPI.Services;
 using oFormsAPI.Repositories;
 using oFormsAPI.Models;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace oFormsAPI
 {
@@ -40,6 +41,12 @@ namespace oFormsAPI
 
             services.Configure<FormsConfiguration>(Configuration.GetSection("FormsConfiguration"));
 
+            // Register the Swagger generator, defining one or more Swagger documents
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "oForms API", Version = "v1" });
+            });
+
             // Add application services.
             services.AddTransient<IMessageService, MessageService>();
             services.AddSingleton<IApiFormRepository, ApiFormRepository>();
@@ -56,6 +63,17 @@ namespace oFormsAPI
             }
             app.UseCors("AllowAllOrigins");
             app.UseStaticFiles();
+
+            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "oForms API v1");
+                c.RoutePrefix = string.Empty;
+            });
+
             app.UseMvc();
         }
     }

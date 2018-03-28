@@ -33,33 +33,34 @@ namespace oFormsAPI.Controllers.v1
             _cache = memoryCache;
             _logger = logger;
         }
-/*
-        [HttpOptions]
-        public HttpResponseMessage Options()
-        {
-            var resp = new HttpResponseMessage(HttpStatusCode.OK);
-            StringValues hostHeader;
-            string origin = null;
-            if (Request.Headers.TryGetValue("Origin", out hostHeader))
-            {
-                origin = hostHeader.ElementAt<string>(0);
-                var uri = new Uri(origin);
-                origin = uri.Host;
-                _logger.LogDebug($"Found CORS domain: {origin}");
-            }
-            else
-            {
-                _logger.LogError($"No CORS domain");
-                origin = "oformsapi.azurewebsites.net";
-                //return Unauthorized();
-            }
-            string domain = _apiFormRepository.GetCORSDomain(origin).Result;
-            resp.Headers.Add("Access-Control-Allow-Origin", $"{origin}");
-            resp.Headers.Add("Access-Control-Allow-Methods", "GET,POST");
+        /*
+                // To be used once dynamic CORS is added as a feature
+                [HttpOptions]
+                public HttpResponseMessage Options()
+                {
+                    var resp = new HttpResponseMessage(HttpStatusCode.OK);
+                    StringValues hostHeader;
+                    string origin = null;
+                    if (Request.Headers.TryGetValue("Origin", out hostHeader))
+                    {
+                        origin = hostHeader.ElementAt<string>(0);
+                        var uri = new Uri(origin);
+                        origin = uri.Host;
+                        _logger.LogDebug($"Found CORS domain: {origin}");
+                    }
+                    else
+                    {
+                        _logger.LogError($"No CORS domain");
+                        origin = "oformsapi.azurewebsites.net";
+                        //return Unauthorized();
+                    }
+                    string domain = _apiFormRepository.GetCORSDomain(origin).Result;
+                    resp.Headers.Add("Access-Control-Allow-Origin", $"{origin}");
+                    resp.Headers.Add("Access-Control-Allow-Methods", "GET,POST");
 
-            return resp;
-        }
-        */
+                    return resp;
+                }
+                */
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -84,13 +85,13 @@ namespace oFormsAPI.Controllers.v1
             {
                 token = apiHeader.ElementAt<string>(0);
                 _logger.LogDebug($"Found 'api-key' header: {token}");
-            } else
+            }
+            else
             {
                 _logger.LogError($"No api-key header");
                 return Unauthorized();
             }
 
-            //var token = submittedForm.Token;
             _logger.LogInformation("Submitted Token: " + token);
 
             FormApiMap formApiMap;
@@ -104,7 +105,7 @@ namespace oFormsAPI.Controllers.v1
                 var endCache = DateTime.Now;
                 _logger.LogInformation("Finished API Key Middleware lookup: " + DateTime.Now.ToString() + " - (" + endCache.Subtract(startCache).TotalMilliseconds + "ms)");
 
-                
+
                 // Set cache options.
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
                     // Keep in cache for this time, reset time if accessed.
@@ -118,9 +119,8 @@ namespace oFormsAPI.Controllers.v1
                 _logger.LogInformation("API key (" + token + ") found in cache!");
             }
 
-            
-            _logger.LogInformation("Sending data for Key: " + formData);
 
+            _logger.LogInformation("Sending data for Key: " + formData);
             _messageService.SendEmailAsync(formApiMap.EmailInfo, formData.ToString());
 
             return Ok(new { });
