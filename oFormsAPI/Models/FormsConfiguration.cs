@@ -10,5 +10,6 @@ namespace oFormsAPI.Models
         public string StorageConnectionString { get; set; }
         public string SendGridAPIKey { get; set; }
         public string MainSiteURLRedirect { get; set; }
+        public string Location { get; set; }
     }
 }

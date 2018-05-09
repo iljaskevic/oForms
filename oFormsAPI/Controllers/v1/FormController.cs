@@ -109,7 +109,7 @@ namespace oFormsAPI.Controllers.v1
                 // Set cache options.
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
                     // Keep in cache for this time, reset time if accessed.
-                    .SetSlidingExpiration(TimeSpan.FromHours(48));
+                    .SetSlidingExpiration(TimeSpan.FromMinutes(1));
 
                 // Save data in cache.
                 _cache.Set(token, formApiMap, cacheEntryOptions);
