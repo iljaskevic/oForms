@@ -42,6 +42,7 @@ namespace oFormsAPI.Services
             //var plainTextContent = message;
             var htmlContent = FormatEmailMessage(emailTemplateInfo, formData);
             var msg = MailHelper.CreateSingleEmail(from, to, emailTemplateInfo.Subject, null, htmlContent);
+            msg.AddCategory(emailTemplateInfo.Subject);
             var response = await client.SendEmailAsync(msg);
             _logger.LogInformation("Finished sending form data through Sendgrid");
         }
